@@ -100,7 +100,6 @@ namespace PPDefModifier
         /// </summary>
         public void ApplyMods()
         {
-            logger.Log("Applying mods in {0}", fileName);
             string contents = File.ReadAllText(fileName);
             List<ModDefinition> mods = null;
             try
@@ -119,6 +118,13 @@ namespace PPDefModifier
                 return;
             }
 
+            if (mods[0].flags?.Any((flag) => flag?.ToLowerInvariant() == "actions") == true)
+            {
+                logger.Log("Deferring {0} to Modnix Actions: Found 'Actions' flag'.", fileName);
+                return;
+            }
+
+            logger.Log("Applying mods in {0}", fileName);
             foreach (var def in mods)
             {
                 try

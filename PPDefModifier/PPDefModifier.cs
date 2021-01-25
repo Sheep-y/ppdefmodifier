@@ -60,6 +60,10 @@ namespace PPDefModifier
         /// A list of field-value pairs to apply to the guid or cls.
         /// </summary>
         public List<ModletStep> modletlist;
+        /// <summary>
+        /// Assorted flags that modifies how the mod is applied.
+        /// </summary>
+        public string[] flags;
 
         public String GetModName()
         {
