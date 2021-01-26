@@ -65,6 +65,24 @@ namespace PPDefModifier
         /// </summary>
         public string[] flags;
 
+        /// <summary>
+        /// Check whether a given flag is set on this mod.  Case insensitive.
+        /// </summary>
+        public bool HasFlag(string targetFlag)
+        {
+            if (flags != null)
+            {
+               foreach (var flag in flags)
+               {
+                   if (flag?.Equals(targetFlag, StringComparison.OrdinalIgnoreCase) == true)
+                   {
+                       return true;
+                   }
+               }
+            }
+            return false;
+        }
+
         public String GetModName()
         {
             if (comment != null)

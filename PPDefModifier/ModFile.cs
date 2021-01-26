@@ -118,7 +118,7 @@ namespace PPDefModifier
                 return;
             }
 
-            if (mods[0].flags?.Any((flag) => flag?.ToLowerInvariant() == "actions") == true)
+            if (mods[0].HasFlag("actions") && PPDefModifier.api?.Invoke("version","modnix") is Version ver && ver >= new Version(3,0,2021,0125))
             {
                 logger.Log("Deferring {0} to Modnix Actions: Found 'Actions' flag'.", fileName);
                 return;
