@@ -240,7 +240,7 @@ namespace PPDefModifier
         /// Create or fetch a ModFile by modid.
         /// The ModFile will have its filename set to the acting mod's path.
         /// </summary>
-        private static ModFile GetModFile(string modid)
+        internal static ModFile GetModFile(string modid)
         {
             if (actionfiles.TryGetValue( modid, out ModFile modfile ))
             {
@@ -253,7 +253,7 @@ namespace PPDefModifier
         /// <summary>
         /// Convert and copy fields from a ModnixAction to a ModDefinition.
         /// </summary>
-        private static void ConvertActionToMod(ModnixAction action, ModDefinition def)
+        internal static void ConvertActionToMod(ModnixAction action, ModDefinition def)
         {
             def.guid = action.GetText("guid");
             def.cls = action.GetText("cls");
