@@ -3,6 +3,7 @@ using System.IO;
 using Base.Defs;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace PPDefModifier
 {
@@ -131,7 +132,7 @@ namespace PPDefModifier
     /// <summary>
     ///  Main entry point to PPDefModifier.
     /// </summary>
-    public class PPDefModifier
+    public static class PPDefModifier
     {
         /// <summary>
         /// The legacy main config file name.
@@ -242,16 +243,17 @@ namespace PPDefModifier
         /// </summary>
         internal static ModFile GetModFile(string modid)
         {
-            if (actionfiles.TryGetValue( modid, out ModFile modfile ))
+            if (actionfiles.TryGetValue(modid, out ModFile modfile))
             {
                 return modfile;
             }
-            string path = api?.Invoke( "path", modid )?.ToString() ?? modid;
+            string path = api?.Invoke("path", modid)?.ToString() ?? modid;
             return actionfiles[modid] = new ModFile(path);
         }
 
         /// <summary>
         /// Convert and copy fields from a ModnixAction to a ModDefinition.
+        /// Although converting to json and back is simpler, it is also more risky, less type safe.
         /// </summary>
         internal static void ConvertActionToMod(ModnixAction action, ModDefinition def)
         {
@@ -263,18 +265,19 @@ namespace PPDefModifier
             if (action.TryGetValue("modletlist", out object mlist) && mlist is JArray list)
             {
                 def.modletlist = new List<ModletStep>();
-                foreach ( var item in list )
+                foreach ( var item in list.OfType<JObject>() )
                 {
-                    if (item is JObject modlet)
+                    var step = new ModletStep
                     {
-                        var step = new ModletStep
-                        {
-                           field = modlet.GetText("field"),
-                           value = modlet.GetText("value"),
-                        };
-                        def.modletlist.Add(step);
-                    }
+                       field = item.GetText("field"),
+                       value = item.GetValue("value").ToObject<object>(),
+                    };
+                    def.modletlist.Add(step);
                 }
+            }
+            if (action.TryGetValue("flags", out object flist) && flist is JArray flags)
+            {
+                def.flags = flags.Select((f) => f?.ToString()).ToArray();
             }
         }
     }
